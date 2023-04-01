@@ -134,7 +134,7 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!114 &3808557943752057739
 MonoBehaviour:
@@ -149,8 +149,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectile: {fileID: -2357004897920863567, guid: d3a0265ec5ad7d44ebdbded1d42e6bbc, type: 3}
-  hpText: {fileID: 0}
   gameOverPanel: {fileID: 0}
+  heartsParent: {fileID: 0}
+  ArmorsParent: {fileID: 0}
   stats:
     poisonDamage: 1
     poisonDuration: 4
@@ -159,10 +160,12 @@ MonoBehaviour:
     secondsPerShot: 2
     shotVelocity: 10
     moveSpeed: 5
-    maxHp: 3
-    maxArmor: 1
-    hp: 10
-    armor: 1
+    _maxHp: 3
+    _maxArmor: 1
+    _hp: 3
+    _armor: 1
+    MAX_HEARTS_POSSIBLE: 20
+    MAX_ARMORS_POSSIBLE: 10
   isDead: 0
 --- !u!114 &-2692335000899425589
 MonoBehaviour:

@@ -1,15 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
 	[SerializeField] Projectile projectile;
-	[SerializeField] TextMeshProUGUI hpText;
 	[SerializeField] GameObject gameOverPanel;
+	[SerializeField] Transform heartsParent;
+	[SerializeField] Transform ArmorsParent;
 
 	public PlayerStats stats;
 	public bool isDead;
@@ -37,11 +37,12 @@ public class Player : MonoBehaviour
 		animator = GetComponent<Animator>();
 		transform = GetComponent<Transform>();
 		flashEffect = GetComponent<FlashEffect>();
-		hpText.text = $"Player : {stats.hp}";
+		UpdateHealthArmorDisplay();
 	}
 
 	private void OnEnable()
 	{
+		PlayerStats.OnHealthChanged += PlayerStats_OnHealthChanged;
 		inputs.Inputs.Shoot.started += Shoot_started;
 		inputs.Inputs.Shoot.canceled += Shoot_canceled;
 		inputs.Enable();
@@ -49,6 +50,7 @@ public class Player : MonoBehaviour
 
 	private void OnDisable()
 	{
+		PlayerStats.OnHealthChanged -= PlayerStats_OnHealthChanged;
 		inputs.Inputs.Shoot.started += Shoot_started;
 		inputs.Inputs.Shoot.canceled += Shoot_canceled;
 		inputs.Enable();
@@ -86,6 +88,11 @@ public class Player : MonoBehaviour
 		}
 
 		rb.MovePosition(rb.position + moveInput.normalized * Time.deltaTime * stats.moveSpeed);
+	}
+
+	private void PlayerStats_OnHealthChanged()
+	{
+		UpdateHealthArmorDisplay();
 	}
 
 	private void Shoot_started(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -127,11 +134,34 @@ public class Player : MonoBehaviour
 			break;
 		}
 
-		hpText.text = $"Player : {stats.hp}";
+		UpdateHealthArmorDisplay();
+
 		if (stats.hp <= 0)
 		{
 			isDead = true;
 			gameOverPanel.SetActive(true);
+		}
+	}
+
+	public void UpdateHealthArmorDisplay()
+	{
+		int emptyHearts = stats.maxHp;
+		int hearts = stats.hp;
+		int emptyArmors = stats.maxArmor;
+		int armors = stats.armor;
+
+		for (int i = 0; i < stats.MAX_HEARTS_POSSIBLE; i++)
+		{
+			Transform heart = heartsParent.GetChild(i);
+			heart.gameObject.SetActive(i < emptyHearts);
+			heart.GetChild(0).gameObject.SetActive(i < hearts);
+		}
+
+		for (int i = 0; i < stats.MAX_ARMORS_POSSIBLE; i++)
+		{
+			Transform heart = ArmorsParent.GetChild(i);
+			heart.gameObject.SetActive(i < emptyArmors);
+			heart.GetChild(0).gameObject.SetActive(i < armors);
 		}
 	}
 }
