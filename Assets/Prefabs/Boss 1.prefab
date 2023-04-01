@@ -112,12 +112,12 @@ GameObject:
   - component: {fileID: 3808557943752057740}
   - component: {fileID: 3808557943752057741}
   - component: {fileID: 9068227561714212360}
-  - component: {fileID: -994203831834785940}
   - component: {fileID: -3078305264519386275}
   - component: {fileID: 916749624059469883}
-  - component: {fileID: 5605769156147985913}
+  - component: {fileID: -2219523569623798460}
+  - component: {fileID: 4634808765173065741}
   m_Layer: 0
-  m_Name: Enemy
+  m_Name: Boss 1
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -212,27 +212,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!114 &-994203831834785940
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3808557943752057742}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a0c44e11e8c44d4d942724a6d949266, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attackDamage: 1
-  spawnTime: 2
-  attackTime: 0.5
-  attackDistance: 1
-  speed: 3
-  hp: 10
-  hpText: {fileID: 857061743195397874}
-  poisonedColor: {r: 0.7309652, g: 0.5182004, b: 0.8018868, a: 1}
-  poisonMaterial: {fileID: 2100000, guid: 97246f7e30b5ceb4887171623d8cd25e, type: 2}
 --- !u!114 &-3078305264519386275
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,7 +247,34 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!60 &5605769156147985913
+--- !u!114 &-2219523569623798460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3808557943752057742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b44d93d39754ebb429f05ac3d8f51387, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackDamage: 1
+  spawnTime: 2
+  attackTime: 0.5
+  attackDistance: 1
+  walkSpeed: 3
+  rushSpeed: 4.2
+  walkTimeMin: 1
+  walkTimeMax: 2
+  rushTime: 3
+  restTime: 3
+  hp: 100
+  maxDirectionChangeAngle: 0.1
+  hpText: {fileID: 857061743195397874}
+  poisonedColor: {r: 0.7294118, g: 0.5176471, b: 0.8, a: 1}
+  poisonMaterial: {fileID: 2100000, guid: 97246f7e30b5ceb4887171623d8cd25e, type: 2}
+--- !u!60 &4634808765173065741
 PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -306,8 +312,8 @@ PolygonCollider2D:
       - {x: -0.22, y: 0.98910004}
       - {x: -0.38, y: 0.5191}
       - {x: -0.38, y: 0.2491}
-      - {x: -0.32, y: 0.22339949}
-      - {x: -0.20432569, y: 0.17593142}
+      - {x: -0.28188953, y: 0.21958844}
+      - {x: -0.19, y: 0.21098946}
       - {x: -0.16, y: 0.0391}
       - {x: -0.12, y: -0.030900002}
       - {x: 0.11, y: -0.030900002}

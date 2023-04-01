@@ -14,7 +14,7 @@ public class PlayerStats
 	public float secondsPerShot;
 	public int shotVelocity;
 
-	public int moveSpeed;
+	public float moveSpeed;
 	[SerializeField] private int _maxHp;
 	[SerializeField] private int _maxArmor;
 
@@ -24,8 +24,8 @@ public class PlayerStats
 	public int MAX_HEARTS_POSSIBLE = 20;
 	public int MAX_ARMORS_POSSIBLE = 10;
 
-	public int armor { get => _armor; set { _armor = (int)MathF.Min(value, MAX_ARMORS_POSSIBLE); OnHealthChanged?.Invoke(); } }
-	public int hp { get => _hp; set { _hp = (int)MathF.Min(value, MAX_HEARTS_POSSIBLE); OnHealthChanged?.Invoke(); } }
+	public int armor { get => _armor; set { _armor = (int)MathF.Min(value, maxArmor); OnHealthChanged?.Invoke(); } }
+	public int hp { get => _hp; set { _hp = (int)MathF.Min(value, maxHp); OnHealthChanged?.Invoke(); } }
 
 	public int maxHp { get => _maxHp; set { _maxHp = (int)MathF.Min(value, MAX_HEARTS_POSSIBLE); OnHealthChanged?.Invoke(); } }
 	public int maxArmor { get => _maxArmor; set { _maxArmor = (int)MathF.Min(value, MAX_HEARTS_POSSIBLE); OnHealthChanged?.Invoke(); } }

@@ -7,6 +7,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
 	[SerializeField] int attackDamage;
+	[SerializeField] float spawnTime;
 	[SerializeField] float attackTime;
 	[SerializeField] float attackDistance;
 	[SerializeField] float speed;
@@ -24,6 +25,7 @@ public class Enemy : MonoBehaviour
 	float currentPoisonDuration;
 	float currentPoisonTickTime;
 	bool isPoisoned;
+	bool isReady;
 
 	public static event Action OnAnyEnemyKilled;
 
@@ -34,10 +36,13 @@ public class Enemy : MonoBehaviour
 		flashEffect = GetComponent<FlashEffect>();
 		spriteRenderer = GetComponent<SpriteRenderer>();
 		hpText.text = $"{hp}";
+		StartCoroutine(ReadyUp());
 	}
 
 	private void Update()
 	{
+		if (!isReady) return;
+
 		if (Player.instance.isDead)
 		{
 			rb.velocity = Vector2.zero;
@@ -79,6 +84,8 @@ public class Enemy : MonoBehaviour
 
 	private void FixedUpdate()
 	{
+		if (!isReady) return;
+
 		//Move to player
 		Vector2 dir = (Player.instance.transform.position - transform.position).normalized;
 		rb.MovePosition(rb.position + dir * Time.deltaTime * speed);
@@ -96,6 +103,18 @@ public class Enemy : MonoBehaviour
 			TakeDamage(null, Player.instance.stats.shotDamage);
 			Destroy(collision.gameObject);
 		}
+	}
+
+	IEnumerator ReadyUp()
+	{
+		while (spriteRenderer.color.a < 1)
+		{
+			Color color = spriteRenderer.color;
+			color.a += Time.deltaTime / spawnTime;
+			spriteRenderer.color = color;
+			yield return null;
+		}
+		isReady = true;
 	}
 
 	void Attack()

@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour
 {
 	[SerializeField] List<Room> rooms;
 	[SerializeField] Spawner spawner;
+	[SerializeField] GameObject enemyPrefab;
+	[SerializeField] GameObject bossPrefab;
 
 	public List<GameObject> currentLoots;
 	
@@ -52,10 +54,22 @@ public class GameManager : MonoBehaviour
 		Destroy(rooms[0]);
 		rooms.RemoveAt(0);
 
+		//IF BOSS ROOM
+		if(rooms.Count == 1)
+		{
+			spawner.SetSpawnPrefab(bossPrefab);
+		}
+		else
+		{
+			spawner.SetSpawnPrefab(enemyPrefab);
+		}
+
 		spawner.ResetSpawns(rooms[0].totalEnemies);
 		remainingEnemies = rooms[0].totalEnemies;
 		spawner.spawnLimit = remainingEnemies;
 		currentLoots = rooms[0].loots;
+
+		Player.instance.stats.armor++;
 	}
 
 	private void Enemy_OnAnyEnemyKilled()
@@ -71,7 +85,7 @@ public class GameManager : MonoBehaviour
 			}
 			else
 			{
-				//Loot, next act
+				//next act
 			}
 		}
 	}

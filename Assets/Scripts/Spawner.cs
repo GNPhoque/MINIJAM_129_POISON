@@ -42,4 +42,9 @@ public class Spawner : MonoBehaviour
 		spawnedEnnemies = 0;
 		currentSpawnTime = spawnTime;
 	}
+
+	public void SetSpawnPrefab(GameObject newPrefab)
+	{
+		unitPrefab = newPrefab;
+	}
 }

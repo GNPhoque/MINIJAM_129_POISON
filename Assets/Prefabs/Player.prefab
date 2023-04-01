@@ -152,6 +152,7 @@ MonoBehaviour:
   gameOverPanel: {fileID: 0}
   heartsParent: {fileID: 0}
   ArmorsParent: {fileID: 0}
+  invincibilityTime: 1
   stats:
     poisonDamage: 1
     poisonDuration: 4
@@ -159,7 +160,7 @@ MonoBehaviour:
     shotDamage: 1
     secondsPerShot: 2
     shotVelocity: 10
-    moveSpeed: 5
+    moveSpeed: 4
     _maxHp: 3
     _maxArmor: 1
     _hp: 3

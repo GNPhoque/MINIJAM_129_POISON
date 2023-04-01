@@ -10,10 +10,11 @@ public class Player : MonoBehaviour
 	[SerializeField] GameObject gameOverPanel;
 	[SerializeField] Transform heartsParent;
 	[SerializeField] Transform ArmorsParent;
+	[SerializeField] float invincibilityTime;
 
 	public PlayerStats stats;
 	public bool isDead;
-
+	
 	Rigidbody2D rb;
 	Animator animator;
 	FlashEffect flashEffect;
@@ -21,6 +22,7 @@ public class Player : MonoBehaviour
 	Vector2 moveInput;
 
 	float currentTimeBetweenShots;
+	float currentInvincibilityTime; 
 	bool autoShoot;
 
 	new Transform transform;
@@ -61,6 +63,11 @@ public class Player : MonoBehaviour
 		if (isDead)
 		{
 			return;
+		}
+
+		if (currentInvincibilityTime > 0)
+		{
+			currentInvincibilityTime -= Time.deltaTime;
 		}
 
 		//MOVEMENT
@@ -109,9 +116,9 @@ public class Player : MonoBehaviour
 	{
 		currentTimeBetweenShots = stats.secondsPerShot;
 
-		Vector2 dir = ((Vector2)Camera.main.ScreenToWorldPoint(Mouse.current.position.value) - (Vector2)transform.position).normalized;
+		Vector2 dir = ((Vector2)Camera.main.ScreenToWorldPoint(Mouse.current.position.value) - (Vector2)transform.position + Vector2.up * .6f).normalized;
 		Vector2 cappedDirection = GetRounded4Directions(dir);
-		Instantiate(projectile, (Vector2)transform.position + Vector2.up * .25f, Quaternion.identity).Shoot(cappedDirection);
+		Instantiate(projectile, (Vector2)transform.position + Vector2.up * .6f, Quaternion.identity).Shoot(cappedDirection);
 	}
 
 	Vector2 GetRounded4Directions(Vector2 baseDirection)
@@ -121,6 +128,9 @@ public class Player : MonoBehaviour
 
 	public void TakeDamage(int damage = 1)
 	{
+		if (currentInvincibilityTime > 0) return;
+
+		currentInvincibilityTime = invincibilityTime;
 		flashEffect.Flash();
 		while (damage > 0)
 		{
