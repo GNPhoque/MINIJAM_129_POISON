@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 766104392983600535}
   - component: {fileID: 8250648451317819832}
   - component: {fileID: 3808557943752057739}
+  - component: {fileID: -2692335000899425589}
+  - component: {fileID: 76947254813659441}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -29,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 3808557943752057742}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 1}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -75,7 +77,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_Sprite: {fileID: 21300000, guid: 05737ac7f63cd244f98fff3cc9b105c9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -103,7 +105,7 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0.30669734}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.4312134, y: 0.17496905}
+    pivot: {x: 0.42, y: 0.17}
     oldSize: {x: 1, y: 1.77}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
@@ -133,7 +135,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 7
+  m_Constraints: 4
 --- !u!114 &3808557943752057739
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146,8 +148,54 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b4e8a3bc40770a46a6863354d0b3324, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 3
-  hp: 10
-  timeBetweenShots: 0
   projectile: {fileID: -2357004897920863567, guid: d3a0265ec5ad7d44ebdbded1d42e6bbc, type: 3}
   hpText: {fileID: 0}
+  gameOverPanel: {fileID: 0}
+  stats:
+    poisonDamage: 1
+    poisonDuration: 4
+    poisonTickTime: 1
+    shotDamage: 1
+    secondsPerShot: 2
+    shotVelocity: 10
+    moveSpeed: 5
+    maxHp: 3
+    maxArmor: 1
+    hp: 10
+    armor: 1
+  isDead: 0
+--- !u!114 &-2692335000899425589
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3808557943752057742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a7cdbe233e58004980748ed14ac4189, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flashMaterial: {fileID: 2100000, guid: 9676a5d624da422498e6923ebc1fb130, type: 2}
+  duration: 0.15
+--- !u!95 &76947254813659441
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3808557943752057742}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 409db2b70d25c5140a7d9354bb352b22, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

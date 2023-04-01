@@ -7,8 +7,11 @@ public class Spawner : MonoBehaviour
 	[SerializeField] GameObject unitPrefab;
 	[SerializeField] float spawnTime;
 	[SerializeField] Transform[] spawnPoints;
+	
+	public int spawnLimit;
 
-	public float currentSpawnTime;
+	float currentSpawnTime;
+	int spawnedEnnemies;
 
 	private void Start()
 	{
@@ -17,11 +20,26 @@ public class Spawner : MonoBehaviour
 
 	private void Update()
 	{
+		if (Player.instance.isDead)
+		{
+			return;
+		}
+
+		if (spawnedEnnemies >= spawnLimit) return;
+
 		currentSpawnTime -= Time.deltaTime;
 		if (currentSpawnTime <= 0)
 		{
 			currentSpawnTime = spawnTime;
 			Instantiate(unitPrefab, spawnPoints[Random.Range(0, spawnPoints.Length)]);
+			spawnedEnnemies++;
 		}
+	}
+
+	public void ResetSpawns(int spawns)
+	{
+		spawnLimit = spawns;
+		spawnedEnnemies = 0;
+		currentSpawnTime = spawnTime;
 	}
 }

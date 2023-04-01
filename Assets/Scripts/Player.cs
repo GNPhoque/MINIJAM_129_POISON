@@ -7,19 +7,24 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-	[SerializeField] float speed;
-	[SerializeField] public float hp;
-	[SerializeField] public float timeBetweenShots;
 	[SerializeField] Projectile projectile;
 	[SerializeField] TextMeshProUGUI hpText;
+	[SerializeField] GameObject gameOverPanel;
 
+	public PlayerStats stats;
+	public bool isDead;
+
+	Rigidbody2D rb;
+	Animator animator;
+	FlashEffect flashEffect;
 	PlayerControls inputs;
 	Vector2 moveInput;
+
 	float currentTimeBetweenShots;
 	bool autoShoot;
-	bool inputingMovement;
 
 	new Transform transform;
+
 	public static Player instance;
 
 	private void Awake()
@@ -28,14 +33,15 @@ public class Player : MonoBehaviour
 		instance = this;
 
 		inputs = new PlayerControls();
+		rb = GetComponent<Rigidbody2D>();
+		animator = GetComponent<Animator>();
 		transform = GetComponent<Transform>();
-		hpText.text = $"Player : {hp}";
+		flashEffect = GetComponent<FlashEffect>();
+		hpText.text = $"Player : {stats.hp}";
 	}
 
 	private void OnEnable()
 	{
-		inputs.Inputs.Move.performed += Move_performed;
-		inputs.Inputs.Move.canceled += Move_canceled;
 		inputs.Inputs.Shoot.started += Shoot_started;
 		inputs.Inputs.Shoot.canceled += Shoot_canceled;
 		inputs.Enable();
@@ -43,8 +49,6 @@ public class Player : MonoBehaviour
 
 	private void OnDisable()
 	{
-		inputs.Inputs.Move.performed += Move_performed;
-		inputs.Inputs.Move.canceled += Move_canceled;
 		inputs.Inputs.Shoot.started += Shoot_started;
 		inputs.Inputs.Shoot.canceled += Shoot_canceled;
 		inputs.Enable();
@@ -52,19 +56,36 @@ public class Player : MonoBehaviour
 
 	private void Update()
 	{
+		if (isDead)
+		{
+			return;
+		}
+
+		//MOVEMENT
+		moveInput = inputs.Inputs.Move.ReadValue<Vector2>();
+		animator.SetFloat("HorizontalMovement", moveInput.x);
+		animator.SetFloat("VerticalMovement", moveInput.y);
+		animator.SetFloat("Speed", moveInput.magnitude);
+
+		//ATTACK
 		currentTimeBetweenShots -= Time.deltaTime;
-		if(currentTimeBetweenShots <= 0)
+		if (currentTimeBetweenShots <= 0)
 		{
 			if (autoShoot)
 			{
 				Shoot();
 			}
 		}
-		if (inputingMovement)
+	}
+
+	private void FixedUpdate()
+	{
+		if (isDead)
 		{
-			moveInput = inputs.Inputs.Move.ReadValue<Vector2>();
-			transform.position += new Vector3(moveInput.x, moveInput.y, 0) * speed * Time.deltaTime;
+			return;
 		}
+
+		rb.MovePosition(rb.position + moveInput.normalized * Time.deltaTime * stats.moveSpeed);
 	}
 
 	private void Shoot_started(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -77,19 +98,9 @@ public class Player : MonoBehaviour
 		autoShoot = false;
 	}
 
-	private void Move_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-	{
-		inputingMovement = false;
-	}
-
-	private void Move_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-	{
-		inputingMovement = true;
-	}
-
 	private void Shoot()
 	{
-		currentTimeBetweenShots = timeBetweenShots;
+		currentTimeBetweenShots = stats.secondsPerShot;
 
 		Vector2 dir = ((Vector2)Camera.main.ScreenToWorldPoint(Mouse.current.position.value) - (Vector2)transform.position).normalized;
 		Vector2 cappedDirection = GetRounded4Directions(dir);
@@ -101,9 +112,26 @@ public class Player : MonoBehaviour
 		return new Vector2(Mathf.RoundToInt(baseDirection.x), Mathf.RoundToInt(baseDirection.y));
 	}
 
-	public void TakeDamage(float damage = 1)
+	public void TakeDamage(int damage = 1)
 	{
-		hp -= damage;
-		hpText.text = $"Player : {hp}";
+		flashEffect.Flash();
+		while (damage > 0)
+		{
+			if (stats.armor > 0)
+			{
+				stats.armor--;
+				damage--;
+				continue;
+			}
+			stats.hp -= damage;
+			break;
+		}
+
+		hpText.text = $"Player : {stats.hp}";
+		if (stats.hp <= 0)
+		{
+			isDead = true;
+			gameOverPanel.SetActive(true);
+		}
 	}
 }

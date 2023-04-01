@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -5,54 +6,133 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-	[SerializeField] float damageTime;
+	[SerializeField] int attackDamage;
+	[SerializeField] float attackTime;
+	[SerializeField] float attackDistance;
 	[SerializeField] float speed;
 	[SerializeField] float hp;
 	[SerializeField] TextMeshProUGUI hpText;
+	[SerializeField] Color poisonedColor;
+	[SerializeField] Material poisonMaterial;
 
-	float currentDamageTime;
+	Rigidbody2D rb;
+	Animator animator;
+	FlashEffect flashEffect;
+	SpriteRenderer spriteRenderer;
+	float currentAttackTime;
 
-	private void Start()
+	float currentPoisonDuration;
+	float currentPoisonTickTime;
+	bool isPoisoned;
+
+	public static event Action OnAnyEnemyKilled;
+
+	private void Awake()
 	{
-		hpText.text = $"Enemy : {hp}";
+		rb = GetComponent<Rigidbody2D>();
+		animator = GetComponent<Animator>();
+		flashEffect = GetComponent<FlashEffect>();
+		spriteRenderer = GetComponent<SpriteRenderer>();
+		hpText.text = $"{hp}";
 	}
 
 	private void Update()
 	{
-		transform.position += (Player.instance.transform.position - transform.position).normalized * Time.deltaTime * speed;
+		if (Player.instance.isDead)
+		{
+			rb.velocity = Vector2.zero;
+			return;
+		}
+
+		//Update Poison
+		if (currentPoisonDuration > 0)
+		{
+			currentPoisonDuration -= Time.deltaTime;
+			if (currentPoisonDuration <= 0)
+			{
+				RemovePoison();
+			}
+			else
+			{
+				currentPoisonTickTime -= Time.deltaTime;
+				if (currentPoisonTickTime <= 0)
+				{
+					ApplyPoison();
+				}
+			}
+		}
+
+		//Attack player
+		if (Vector3.Distance(Player.instance.transform.position, transform.position) < attackDistance)
+		{
+			currentAttackTime -= Time.deltaTime;
+			if (currentAttackTime <= 0f)
+			{
+				Attack();
+			}
+		}
+		else
+		{
+			currentAttackTime = attackTime;
+		}
+	}
+
+	private void FixedUpdate()
+	{
+		//Move to player
+		Vector2 dir = (Player.instance.transform.position - transform.position).normalized;
+		rb.MovePosition(rb.position + dir * Time.deltaTime * speed);
+
+		animator.SetFloat("HorizontalMovement", dir.x);
+		animator.SetFloat("VerticalMovement", dir.y);
+		animator.SetFloat("Speed", dir.magnitude);
 	}
 
 	private void OnCollisionEnter2D(Collision2D collision)
 	{
-		if (collision.gameObject.CompareTag("Player"))
-		{
-			currentDamageTime = damageTime;
-		}
-
 		if (collision.gameObject.CompareTag("PlayerProjectile"))
 		{
-			TakeDamage();
+			AddPoison();
+			TakeDamage(null, Player.instance.stats.shotDamage);
 			Destroy(collision.gameObject);
 		}
 	}
 
-	private void OnCollisionStay2D(Collision2D collision)
+	void Attack()
 	{
-		currentDamageTime -= Time.deltaTime;
-		if(currentDamageTime <= 0)
+		Player.instance.TakeDamage(attackDamage);
+		currentAttackTime = attackTime;
+	}
+
+	public void TakeDamage(Material mat = null, int damage = 1)
+	{
+		flashEffect.Flash(mat);
+		hp -= damage;
+		hpText.text = $"{hp}";
+		if (hp <= 0)
 		{
-			currentDamageTime = damageTime;
-			Player.instance.TakeDamage();
+			OnAnyEnemyKilled?.Invoke();
+			Destroy(gameObject);
 		}
 	}
 
-	public void TakeDamage(float damage = 1)
+	public void AddPoison()
 	{
-		hp -= damage;
-		hpText.text = $"Enemy : {hp}";
-		if (hp <= 0)
-		{
-			Destroy(gameObject);
-		}
+		isPoisoned = true;
+		currentPoisonDuration = Player.instance.stats.poisonDuration;
+		currentPoisonTickTime = Player.instance.stats.poisonTickTime;
+		spriteRenderer.color = poisonedColor;
+	}
+
+	void ApplyPoison()
+	{
+		TakeDamage(poisonMaterial, Player.instance.stats.poisonDamage);
+		currentPoisonTickTime = Player.instance.stats.poisonTickTime;
+	}
+
+	void RemovePoison()
+	{
+		isPoisoned = false;
+		spriteRenderer.color = Color.white;
 	}
 }

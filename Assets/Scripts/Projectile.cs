@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-	[SerializeField] float speed;
 	[SerializeField] float damage;
 
 	Rigidbody2D rb;
@@ -17,7 +16,8 @@ public class Projectile : MonoBehaviour
 
 	public void Shoot(Vector2 dir)
 	{
+		AudioManager.instance.PlayWhoosh();
 		transform.right = dir;
-		rb.AddForce(dir * speed, ForceMode2D.Impulse);
+		rb.AddForce(dir * Player.instance.stats.shotVelocity, ForceMode2D.Impulse);
 	}
 }
