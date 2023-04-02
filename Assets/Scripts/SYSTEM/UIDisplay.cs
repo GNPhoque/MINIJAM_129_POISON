@@ -72,6 +72,7 @@ public class UIDisplay : MonoBehaviour
 	private void Boss_OnAnyBossSpawn()
 	{
 		bossHealthbar.SetActive(true);
+		bossHealthbarFill.fillAmount = 1f;
 	}
 
 	private void Boss_OnAnyEnemyKilled()

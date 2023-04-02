@@ -118,8 +118,9 @@ public class Player : MonoBehaviour
 			chargeBarFill.fillAmount = 0f;
 			chargeBar.SetActive(true);
 			isChargingShot = true;
+			autoShoot = false;
 		}
-		else autoShoot = true; 
+		else autoShoot = true;
 	}
 
 	private void Shoot_canceled(InputAction.CallbackContext obj)
@@ -130,7 +131,7 @@ public class Player : MonoBehaviour
 			isChargingShot = false;
 			StartCoroutine(ShootCharged());
 		}
-		else autoShoot = false;
+		autoShoot = false;
 	}
 	#endregion
 
