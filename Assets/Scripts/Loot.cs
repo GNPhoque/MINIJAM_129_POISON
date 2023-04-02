@@ -35,7 +35,7 @@ public class Loot : MonoBehaviour
 					Player.instance.stats.shotVelocity += (int)value;
 					break;
 				case LootBonusStat.moveSpeed:
-					Player.instance.stats.moveSpeed += (int)value;
+					Player.instance.stats.moveSpeed += value;
 					break;
 				case LootBonusStat.maxHp:
 					Player.instance.stats.maxHp += (int)value;

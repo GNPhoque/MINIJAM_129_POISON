@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
 	[SerializeField] Spawner spawner;
 	[SerializeField] GameObject enemyPrefab;
 	[SerializeField] GameObject bossPrefab;
+	[SerializeField] Cinemachine.CinemachineVirtualCamera enterCamera;
 
 	public List<GameObject> currentLoots;
 	
@@ -42,14 +43,17 @@ public class GameManager : MonoBehaviour
 		remainingEnemies = rooms[0].totalEnemies;
 		spawner.spawnLimit = remainingEnemies;
 		currentLoots = rooms[0].loots;
+		enterCamera.Priority = 0;
 	}
 	#endregion
 
 	#region EVENTS
 	private void Room_OnRoomClosed()
 	{
-		Camera.main.transform.position += Vector3.right * 18f;
+		//Camera.main.transform.position += Vector3.right * 18f;
+		rooms[0].GetComponentInChildren<Cinemachine.CinemachineVirtualCamera>().Priority = 0;
 		spawner.transform.position += Vector3.right * 18f;
+		rooms[0].CloseWallE();
 
 		Destroy(rooms[0]);
 		rooms.RemoveAt(0);
