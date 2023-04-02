@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : BaseEnemy
 {
 	[SerializeField] int attackDamage;
 	[SerializeField] float spawnTime;
@@ -41,9 +41,7 @@ public class Enemy : MonoBehaviour
 
 	private void Update()
 	{
-		if (!isReady) return;
-
-		if (Player.instance.isDead)
+		if (!isReady || Player.instance.isDead)
 		{
 			rb.velocity = Vector2.zero;
 			return;
@@ -95,16 +93,6 @@ public class Enemy : MonoBehaviour
 		animator.SetFloat("Speed", dir.magnitude);
 	}
 
-	private void OnCollisionEnter2D(Collision2D collision)
-	{
-		if (collision.gameObject.CompareTag("PlayerProjectile"))
-		{
-			AddPoison();
-			TakeDamage(null, Player.instance.stats.shotDamage);
-			Destroy(collision.gameObject);
-		}
-	}
-
 	IEnumerator ReadyUp()
 	{
 		while (spriteRenderer.color.a < 1)
@@ -123,7 +111,7 @@ public class Enemy : MonoBehaviour
 		currentAttackTime = attackTime;
 	}
 
-	public void TakeDamage(Material mat = null, int damage = 1)
+	public override void TakeDamage(Material mat = null, int damage = 1)
 	{
 		flashEffect.Flash(mat);
 		hp -= damage;
@@ -135,7 +123,7 @@ public class Enemy : MonoBehaviour
 		}
 	}
 
-	public void AddPoison()
+	public override void AddPoison()
 	{
 		isPoisoned = true;
 		currentPoisonDuration = Player.instance.stats.poisonDuration;

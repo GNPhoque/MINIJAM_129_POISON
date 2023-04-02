@@ -98,7 +98,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 3808557943752057742}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 09bac1cf05bf2084ca50db313d913b88, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -127,7 +127,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 1000
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 0
@@ -148,11 +148,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b4e8a3bc40770a46a6863354d0b3324, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectile: {fileID: -2357004897920863567, guid: d3a0265ec5ad7d44ebdbded1d42e6bbc, type: 3}
+  projectilePrefab: {fileID: -2357004897920863567, guid: d3a0265ec5ad7d44ebdbded1d42e6bbc, type: 3}
   gameOverPanel: {fileID: 0}
   heartsParent: {fileID: 0}
   ArmorsParent: {fileID: 0}
   invincibilityTime: 1
+  timeBetweenChargedShots: 0.15
+  maxChargedShots: 4
   stats:
     poisonDamage: 1
     poisonDuration: 4
@@ -167,6 +169,7 @@ MonoBehaviour:
     _armor: 1
     MAX_HEARTS_POSSIBLE: 20
     MAX_ARMORS_POSSIBLE: 10
+  bossBonuses: 
   isDead: 0
 --- !u!114 &-2692335000899425589
 MonoBehaviour:

@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
 	{
 		Room.OnRoomClosed += Room_OnRoomClosed;
 		Enemy.OnAnyEnemyKilled += Enemy_OnAnyEnemyKilled;
+		Boss.OnAnyEnemyKilled += Enemy_OnAnyEnemyKilled;
 		Loot.OnAnyLootBonusPicked += Loot_OnAnyLootBonusPicked;
 	}
 
@@ -35,6 +36,7 @@ public class GameManager : MonoBehaviour
 	{
 		Room.OnRoomClosed -= Room_OnRoomClosed;
 		Enemy.OnAnyEnemyKilled -= Enemy_OnAnyEnemyKilled;
+		Boss.OnAnyEnemyKilled -= Enemy_OnAnyEnemyKilled;
 		Loot.OnAnyLootBonusPicked -= Loot_OnAnyLootBonusPicked;
 	}
 

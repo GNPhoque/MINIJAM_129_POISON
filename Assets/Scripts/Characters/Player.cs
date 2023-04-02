@@ -6,13 +6,16 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-	[SerializeField] Projectile projectile;
+	[SerializeField] Projectile projectilePrefab;
 	[SerializeField] GameObject gameOverPanel;
 	[SerializeField] Transform heartsParent;
 	[SerializeField] Transform ArmorsParent;
 	[SerializeField] float invincibilityTime;
+	[SerializeField] float timeBetweenChargedShots;
+	[SerializeField] int maxChargedShots;
 
 	public PlayerStats stats;
+	public List<LootBossBonus> bossBonuses;
 	public bool isDead;
 	
 	Rigidbody2D rb;
@@ -22,13 +25,16 @@ public class Player : MonoBehaviour
 	Vector2 moveInput;
 
 	float currentTimeBetweenShots;
-	float currentInvincibilityTime; 
+	float currentInvincibilityTime;
+	float currentShotChargeTime;
 	bool autoShoot;
+	bool isChargingShot;
 
 	new Transform transform;
 
 	public static Player instance;
 
+	#region MONOBEHAVIOUR
 	private void Awake()
 	{
 		if (instance) Destroy(instance.gameObject);
@@ -80,6 +86,10 @@ public class Player : MonoBehaviour
 		currentTimeBetweenShots -= Time.deltaTime;
 		if (currentTimeBetweenShots <= 0)
 		{
+			if (isChargingShot)
+			{
+				currentShotChargeTime += Time.deltaTime;
+			}
 			if (autoShoot)
 			{
 				Shoot();
@@ -95,8 +105,10 @@ public class Player : MonoBehaviour
 		}
 
 		rb.MovePosition(rb.position + moveInput.normalized * Time.deltaTime * stats.moveSpeed);
-	}
+	} 
+	#endregion
 
+	#region EVENTS
 	private void PlayerStats_OnHealthChanged()
 	{
 		UpdateHealthArmorDisplay();
@@ -104,26 +116,66 @@ public class Player : MonoBehaviour
 
 	private void Shoot_started(UnityEngine.InputSystem.InputAction.CallbackContext obj)
 	{
-		autoShoot = true;
+		if (bossBonuses.Contains(LootBossBonus.ChargedShot))
+		{
+			currentShotChargeTime = 0f;
+			isChargingShot = true;
+		}
+		else autoShoot = true; 
 	}
 
 	private void Shoot_canceled(InputAction.CallbackContext obj)
 	{
-		autoShoot = false;
-	}
+		if (bossBonuses.Contains(LootBossBonus.ChargedShot))
+		{
+			isChargingShot = false;
+			StartCoroutine(ShootCharged());
+		}
+		else autoShoot = false;
+	} 
+	#endregion
 
 	private void Shoot()
 	{
 		currentTimeBetweenShots = stats.secondsPerShot;
 
-		Vector2 dir = ((Vector2)Camera.main.ScreenToWorldPoint(Mouse.current.position.value) - (Vector2)transform.position + Vector2.up * .6f).normalized;
-		Vector2 cappedDirection = GetRounded4Directions(dir);
-		Instantiate(projectile, (Vector2)transform.position + Vector2.up * .6f, Quaternion.identity).Shoot(cappedDirection);
+		Vector2 dir = ((Vector2)Camera.main.ScreenToWorldPoint(Mouse.current.position.value) - ((Vector2)transform.position + Vector2.up * .6f)).normalized;
+		if(!bossBonuses.Contains(LootBossBonus.PreciseShot)) dir = GetRounded4Directions(dir);
+
+		Instantiate(projectilePrefab, (Vector2)transform.position + Vector2.up * .6f, Quaternion.identity).Shoot(dir);
+
+	}
+
+	IEnumerator ShootCharged()
+	{
+		if (currentShotChargeTime >= stats.secondsPerShot)
+		{
+			currentTimeBetweenShots = 20; //Cant start charging before all shots ended
+										  //int shots = Mathf.FloorToInt(Mathf.Clamp(currentShotChargeTime / stats.secondsPerShot, 0, maxChargedShots));
+										  //for (int i = 0; i < shots; i++)
+			for (int i = 0; i < maxChargedShots; i++)
+			{
+				Shoot();
+				yield return new WaitForSeconds(timeBetweenChargedShots);
+			}
+			currentTimeBetweenShots = 0;
+		}
 	}
 
 	Vector2 GetRounded4Directions(Vector2 baseDirection)
 	{
-		return new Vector2(Mathf.RoundToInt(baseDirection.x), Mathf.RoundToInt(baseDirection.y));
+		float absX = Mathf.Abs(baseDirection.x);
+		float absY = Mathf.Abs(baseDirection.y);
+
+		if (absX > absY)
+		{
+			return baseDirection.x > 0 ? Vector2.right : Vector2.left;
+		}
+		else if (absX < absY)
+		{
+			return baseDirection.y > 0 ? Vector2.up : Vector2.down;
+		}
+		return Vector2.zero;
 	}
 
 	public void TakeDamage(int damage = 1)

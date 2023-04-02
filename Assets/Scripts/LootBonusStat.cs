@@ -1,5 +1,7 @@
 ﻿public enum LootBonusStat
 {
+	None,
+
 	poisonDamage,
 	poisonDuration,
 	poisonTickTime,

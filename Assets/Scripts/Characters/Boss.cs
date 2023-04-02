@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class Boss : MonoBehaviour
+public class Boss : BaseEnemy
 {
 	[SerializeField] int attackDamage;
 	[SerializeField] float spawnTime;
@@ -33,6 +33,7 @@ public class Boss : MonoBehaviour
 	float currentPoisonTickTime;
 	bool isPoisoned;
 	bool isReady;
+	bool isDead;
 
 	//PHASES
 	bool isResting;
@@ -57,11 +58,10 @@ public class Boss : MonoBehaviour
 
 	private void Update()
 	{
-		print(currentSpeed);
-		if (!isReady) return;
-
-		if (Player.instance.isDead)
+		if (!isReady || isDead || Player.instance.isDead)
 		{
+			animator.SetBool("IsRushing", false);
+			animator.SetBool("IsResting", false);
 			rb.velocity = Vector2.zero;
 			return;
 		}
@@ -107,9 +107,10 @@ public class Boss : MonoBehaviour
 
 	private void FixedUpdate()
 	{
-		if (!isReady || isResting || Player.instance.isDead)
+		if (!isReady || isDead || isResting || Player.instance.isDead)
 		{
 			rb.velocity = Vector2.zero;
+			animator.SetFloat("Speed", 0);
 			return;
 		}
 
@@ -124,21 +125,15 @@ public class Boss : MonoBehaviour
 
 		animator.SetFloat("HorizontalMovement", dir.x);
 		animator.SetFloat("VerticalMovement", dir.y);
-		animator.SetFloat("Speed", dir.magnitude);
+		animator.SetFloat("Speed", currentSpeed);
 	}
 
 	private void OnCollisionStay2D(Collision2D collision)
 	{
+		if (isDead) return;
 		if (collision.gameObject.CompareTag("Player"))
 		{
 			Player.instance.TakeDamage(attackDamage);
-		}
-
-		if (collision.gameObject.CompareTag("PlayerProjectile"))
-		{
-			AddPoison();
-			TakeDamage(null, Player.instance.stats.shotDamage);
-			Destroy(collision.gameObject);
 		}
 	}
 
@@ -158,12 +153,14 @@ public class Boss : MonoBehaviour
 	void StartResting()
 	{
 		isResting = true;
+		animator.SetBool("IsResting", isResting);
 		currentRestingTime = restTime;
 	}
 
 	void StopResting()
 	{
 		isResting = false;
+		animator.SetBool("IsResting", isResting);
 		StartWalking();
 	}
 
@@ -183,6 +180,7 @@ public class Boss : MonoBehaviour
 	void StartRushing()
 	{
 		isRushing = true;
+		animator.SetBool("IsRushing", isRushing);
 		oldMovementDirection = (Player.instance.transform.position - transform.position).normalized;
 		currentSpeed = rushSpeed;
 		currentRushTime = rushTime;
@@ -191,23 +189,30 @@ public class Boss : MonoBehaviour
 	void StopRushing()
 	{
 		isRushing = false;
+		animator.SetBool("IsRushing", isRushing);
 		StartResting();
 	}
 
-	public void TakeDamage(Material mat = null, int damage = 1)
+	public override void TakeDamage(Material mat = null, int damage = 1)
 	{
+		if (damage > 10000) damage = Player.instance.stats.shotDamage;
 		flashEffect.Flash(mat);
 		hp -= damage;
 		hpText.text = $"{hp}";
 		if (hp <= 0)
 		{
+			transform.parent = null;
+			hpText.gameObject.SetActive(false);
+			isDead = true;
+			spriteRenderer.color = Color.white;
 			OnAnyEnemyKilled?.Invoke();
-			Destroy(gameObject);
+			animator.SetBool("IsDead", isDead);
+			//Destroy(gameObject);
 		}
 	}
 
 	#region POISON
-	public void AddPoison()
+	public override void AddPoison()
 	{
 		isPoisoned = true;
 		currentPoisonDuration = Player.instance.stats.poisonDuration;

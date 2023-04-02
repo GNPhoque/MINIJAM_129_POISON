@@ -436,7 +436,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5e3df082f9c0234f8db6397bdde7495, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bonusStat: 0
+  bonusStat: 1
+  bossBonus: 0
   value: 1
 --- !u!58 &1253062480
 CircleCollider2D:
@@ -553,7 +554,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5e3df082f9c0234f8db6397bdde7495, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bonusStat: 2
+  bonusStat: 3
+  bossBonus: 0
   value: 0.25
 --- !u!58 &1528737590
 CircleCollider2D:
@@ -906,7 +908,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5e3df082f9c0234f8db6397bdde7495, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bonusStat: 1
+  bonusStat: 2
+  bossBonus: 0
   value: 3
 --- !u!58 &1720935918
 CircleCollider2D:
