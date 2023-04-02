@@ -1,3 +1,4 @@
+using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,9 +8,11 @@ public class Room : MonoBehaviour
 {
 	[SerializeField] GameObject wallW;
 	[SerializeField] GameObject wallE;
-	
+
+	public CinemachineVirtualCamera VirtualCamera;
 	public List<GameObject> loots;
 	public int totalEnemies;
+	public bool isBossRoom;
 
 	public static event Action OnRoomClosed;
 

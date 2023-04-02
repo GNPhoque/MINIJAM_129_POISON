@@ -1,18 +1,19 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
 	[SerializeField] Projectile projectilePrefab;
-	[SerializeField] GameObject gameOverPanel;
-	[SerializeField] Transform heartsParent;
-	[SerializeField] Transform ArmorsParent;
 	[SerializeField] float invincibilityTime;
 	[SerializeField] float timeBetweenChargedShots;
 	[SerializeField] int maxChargedShots;
+	[SerializeField] GameObject chargeBar;
+	[SerializeField] Image chargeBarFill;
 
 	public PlayerStats stats;
 	public List<LootBossBonus> bossBonuses;
@@ -32,6 +33,8 @@ public class Player : MonoBehaviour
 
 	new Transform transform;
 
+	public static event Action OnDeath;
+
 	public static Player instance;
 
 	#region MONOBEHAVIOUR
@@ -45,12 +48,10 @@ public class Player : MonoBehaviour
 		animator = GetComponent<Animator>();
 		transform = GetComponent<Transform>();
 		flashEffect = GetComponent<FlashEffect>();
-		UpdateHealthArmorDisplay();
 	}
 
 	private void OnEnable()
 	{
-		PlayerStats.OnHealthChanged += PlayerStats_OnHealthChanged;
 		inputs.Inputs.Shoot.started += Shoot_started;
 		inputs.Inputs.Shoot.canceled += Shoot_canceled;
 		inputs.Enable();
@@ -58,7 +59,6 @@ public class Player : MonoBehaviour
 
 	private void OnDisable()
 	{
-		PlayerStats.OnHealthChanged -= PlayerStats_OnHealthChanged;
 		inputs.Inputs.Shoot.started += Shoot_started;
 		inputs.Inputs.Shoot.canceled += Shoot_canceled;
 		inputs.Enable();
@@ -89,6 +89,7 @@ public class Player : MonoBehaviour
 			if (isChargingShot)
 			{
 				currentShotChargeTime += Time.deltaTime;
+				chargeBarFill.fillAmount = currentShotChargeTime / stats.secondsPerShot;
 			}
 			if (autoShoot)
 			{
@@ -109,16 +110,13 @@ public class Player : MonoBehaviour
 	#endregion
 
 	#region EVENTS
-	private void PlayerStats_OnHealthChanged()
-	{
-		UpdateHealthArmorDisplay();
-	}
-
 	private void Shoot_started(UnityEngine.InputSystem.InputAction.CallbackContext obj)
 	{
 		if (bossBonuses.Contains(LootBossBonus.ChargedShot))
 		{
 			currentShotChargeTime = 0f;
+			chargeBarFill.fillAmount = 0f;
+			chargeBar.SetActive(true);
 			isChargingShot = true;
 		}
 		else autoShoot = true; 
@@ -128,19 +126,21 @@ public class Player : MonoBehaviour
 	{
 		if (bossBonuses.Contains(LootBossBonus.ChargedShot))
 		{
+			chargeBar.SetActive(false);
 			isChargingShot = false;
 			StartCoroutine(ShootCharged());
 		}
 		else autoShoot = false;
-	} 
+	}
 	#endregion
 
+	#region SHOOT
 	private void Shoot()
 	{
 		currentTimeBetweenShots = stats.secondsPerShot;
 
 		Vector2 dir = ((Vector2)Camera.main.ScreenToWorldPoint(Mouse.current.position.value) - ((Vector2)transform.position + Vector2.up * .6f)).normalized;
-		if(!bossBonuses.Contains(LootBossBonus.PreciseShot)) dir = GetRounded4Directions(dir);
+		if (!bossBonuses.Contains(LootBossBonus.PreciseShot)) dir = GetRounded4Directions(dir);
 
 		Instantiate(projectilePrefab, (Vector2)transform.position + Vector2.up * .6f, Quaternion.identity).Shoot(dir);
 
@@ -176,7 +176,8 @@ public class Player : MonoBehaviour
 			return baseDirection.y > 0 ? Vector2.up : Vector2.down;
 		}
 		return Vector2.zero;
-	}
+	} 
+	#endregion
 
 	public void TakeDamage(int damage = 1)
 	{
@@ -196,34 +197,11 @@ public class Player : MonoBehaviour
 			break;
 		}
 
-		UpdateHealthArmorDisplay();
-
 		if (stats.hp <= 0)
 		{
 			isDead = true;
-			gameOverPanel.SetActive(true);
-		}
-	}
-
-	public void UpdateHealthArmorDisplay()
-	{
-		int emptyHearts = stats.maxHp;
-		int hearts = stats.hp;
-		int emptyArmors = stats.maxArmor;
-		int armors = stats.armor;
-
-		for (int i = 0; i < stats.MAX_HEARTS_POSSIBLE; i++)
-		{
-			Transform heart = heartsParent.GetChild(i);
-			heart.gameObject.SetActive(i < emptyHearts);
-			heart.GetChild(0).gameObject.SetActive(i < hearts);
-		}
-
-		for (int i = 0; i < stats.MAX_ARMORS_POSSIBLE; i++)
-		{
-			Transform heart = ArmorsParent.GetChild(i);
-			heart.gameObject.SetActive(i < emptyArmors);
-			heart.GetChild(0).gameObject.SetActive(i < armors);
+			animator.SetBool("IsDead", true);
+			OnDeath?.Invoke();
 		}
 	}
 }

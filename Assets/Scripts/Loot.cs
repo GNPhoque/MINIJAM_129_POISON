@@ -10,6 +10,7 @@ public class Loot : MonoBehaviour
 	public float value;
 
 	public static event Action OnAnyLootBonusPicked;
+	public static event Action OnAnyStatLootBonusPicked;
 
 	private void OnCollisionEnter2D(Collision2D collision)
 	{
@@ -57,6 +58,7 @@ public class Loot : MonoBehaviour
 					default:
 						break;
 				}
+				OnAnyStatLootBonusPicked?.Invoke();
 			}
 
 

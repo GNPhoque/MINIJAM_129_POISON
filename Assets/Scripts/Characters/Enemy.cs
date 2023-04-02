@@ -82,14 +82,14 @@ public class Enemy : BaseEnemy
 
 	private void FixedUpdate()
 	{
-		if (!isReady) return;
+		if (!isReady || Player.instance.isDead) return;
 
 		//Move to player
 		Vector2 dir = (Player.instance.transform.position - transform.position).normalized;
 		rb.MovePosition(rb.position + dir * Time.deltaTime * speed);
 
 		animator.SetFloat("HorizontalMovement", dir.x);
-		animator.SetFloat("VerticalMovement", dir.y);
+		//animator.SetFloat("VerticalMovement", dir.y);
 		animator.SetFloat("Speed", dir.magnitude);
 	}
 

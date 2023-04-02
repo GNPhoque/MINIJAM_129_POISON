@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-	[SerializeField] List<Room> rooms;
+	[SerializeField] public List<Room> rooms;
 	[SerializeField] Spawner spawner;
 	[SerializeField] GameObject enemyPrefab;
 	[SerializeField] GameObject bossPrefab;
@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour
 		rooms.RemoveAt(0);
 
 		//IF BOSS ROOM
-		if(rooms.Count == 1)
+		if(rooms[0].isBossRoom)
 		{
 			spawner.SetSpawnPrefab(bossPrefab);
 		}
@@ -98,7 +98,6 @@ public class GameManager : MonoBehaviour
 
 	private void Loot_OnAnyLootBonusPicked()
 	{
-		print("destroy loots");
 		foreach (var item in currentLoots)
 		{
 			Destroy(item.gameObject);

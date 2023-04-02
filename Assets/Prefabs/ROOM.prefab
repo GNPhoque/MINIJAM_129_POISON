@@ -1072,6 +1072,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4463196490608509899}
   - component: {fileID: 1581915176597982427}
+  - component: {fileID: 1704402293892405372}
   m_Layer: 0
   m_Name: CM vcam2
   m_TagString: Untagged
@@ -1133,6 +1134,29 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 851864222298874506}
+--- !u!114 &1704402293892405372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4544260290082152796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00b2d199b96b516448144ab30fb26aed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ApplyAfter: 1
+  m_ChannelMask: 1
+  m_Gain: 1
+  m_Use2DDistance: 1
+  m_UseCameraSpace: 0
+  m_ReactionSettings:
+    m_SecondaryNoise: {fileID: 0}
+    m_AmplitudeGain: 0
+    m_FrequencyGain: 0
+    m_Duration: 0
+    m_NoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1 &7896038314343069840
 GameObject:
   m_ObjectHideFlags: 0
@@ -1192,11 +1216,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wallW: {fileID: 7896038315198393768}
   wallE: {fileID: 7896038315332976615}
+  VirtualCamera: {fileID: 1581915176597982427}
   loots:
   - {fileID: 1253062476}
   - {fileID: 1720935917}
   - {fileID: 1528737589}
   totalEnemies: 5
+  isBossRoom: 0
 --- !u!61 &7896038314343069854
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2123,6 +2149,7 @@ GameObject:
   - component: {fileID: 2870450838777659745}
   - component: {fileID: 5059128811478266343}
   - component: {fileID: 709503116660812416}
+  - component: {fileID: 3776895970582422358}
   m_Layer: 0
   m_Name: cm
   m_TagString: Untagged
@@ -2206,3 +2233,20 @@ MonoBehaviour:
   m_YawDamping: 0
   m_RollDamping: 0
   m_AngularDamping: 0
+--- !u!114 &3776895970582422358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8903130362111648389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_NoiseProfile: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}
+  m_PivotOffset: {x: 0, y: 0, z: 0}
+  m_AmplitudeGain: 0
+  m_FrequencyGain: 2
+  mNoiseOffsets: {x: 0, y: 0, z: 0}

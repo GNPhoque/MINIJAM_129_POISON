@@ -18,7 +18,7 @@ public class Boss : BaseEnemy
 	[SerializeField] float restTime;
 	[SerializeField] float hp;
 	[SerializeField] float maxDirectionChangeAngle;
-	[SerializeField] TextMeshProUGUI hpText;
+	[SerializeField] float normalRushChance;
 	[SerializeField] Color poisonedColor;
 	[SerializeField] Material poisonMaterial;
 
@@ -29,6 +29,7 @@ public class Boss : BaseEnemy
 
 	Vector2 oldMovementDirection;
 
+	float currentHp;
 	float currentPoisonDuration;
 	float currentPoisonTickTime;
 	bool isPoisoned;
@@ -39,12 +40,15 @@ public class Boss : BaseEnemy
 	bool isResting;
 	bool isWalking;
 	bool isRushing;
+	bool isRushingAlt;
 	float currentSpeed;
 	float currentWalkTime;
 	float currentRushTime;
 	float currentRestingTime;
 
+	public static event Action OnAnyBossSpawn;
 	public static event Action OnAnyEnemyKilled;
+	public static event Action<float, float> OnBossHealthChanged;
 
 	private void Awake()
 	{
@@ -52,8 +56,9 @@ public class Boss : BaseEnemy
 		animator = GetComponent<Animator>();
 		flashEffect = GetComponent<FlashEffect>();
 		spriteRenderer = GetComponent<SpriteRenderer>();
-		hpText.text = $"{hp}";
 		StartCoroutine(ReadyUp());
+		currentHp = hp;
+		OnAnyBossSpawn?.Invoke();
 	}
 
 	private void Update()
@@ -72,7 +77,7 @@ public class Boss : BaseEnemy
 			else currentWalkTime -= Time.deltaTime;
 		}
 
-		if(isRushing)
+		if(isRushing || isRushingAlt)
 		{
 			if (currentRushTime <= 0) StopRushing();
 			else currentRushTime -= Time.deltaTime;
@@ -120,6 +125,10 @@ public class Boss : BaseEnemy
 		{
 			dir = Vector3.RotateTowards(oldMovementDirection, dir, maxDirectionChangeAngle, 10f);
 		}
+		else if(isRushingAlt)
+		{
+			dir = oldMovementDirection;
+		}
 		rb.MovePosition(rb.position + dir * Time.deltaTime * currentSpeed);
 		oldMovementDirection = dir;
 
@@ -134,6 +143,11 @@ public class Boss : BaseEnemy
 		if (collision.gameObject.CompareTag("Player"))
 		{
 			Player.instance.TakeDamage(attackDamage);
+		}
+		if(collision.gameObject.CompareTag("Walls") && isRushingAlt)
+		{
+			CameraShake.instance.StartShake();
+			StopRushing();
 		}
 	}
 
@@ -179,8 +193,11 @@ public class Boss : BaseEnemy
 
 	void StartRushing()
 	{
-		isRushing = true;
-		animator.SetBool("IsRushing", isRushing);
+		if (UnityEngine.Random.value < normalRushChance)
+			isRushing = true;
+		else
+			isRushingAlt = true;
+		animator.SetBool("IsRushing", true);
 		oldMovementDirection = (Player.instance.transform.position - transform.position).normalized;
 		currentSpeed = rushSpeed;
 		currentRushTime = rushTime;
@@ -189,7 +206,8 @@ public class Boss : BaseEnemy
 	void StopRushing()
 	{
 		isRushing = false;
-		animator.SetBool("IsRushing", isRushing);
+		isRushingAlt = false;
+		animator.SetBool("IsRushing", false);
 		StartResting();
 	}
 
@@ -197,12 +215,11 @@ public class Boss : BaseEnemy
 	{
 		if (damage > 10000) damage = Player.instance.stats.shotDamage;
 		flashEffect.Flash(mat);
-		hp -= damage;
-		hpText.text = $"{hp}";
-		if (hp <= 0)
+		currentHp -= damage;
+		OnBossHealthChanged?.Invoke(currentHp, hp);
+		if (currentHp <= 0)
 		{
 			transform.parent = null;
-			hpText.gameObject.SetActive(false);
 			isDead = true;
 			spriteRenderer.color = Color.white;
 			OnAnyEnemyKilled?.Invoke();
