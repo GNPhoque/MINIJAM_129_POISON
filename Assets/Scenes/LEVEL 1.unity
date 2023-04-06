@@ -11360,7 +11360,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3808557943752057739, guid: 467af63a9a94d2a46b7ac18aa7eb55ec, type: 3}
       propertyPath: bossBonuses.Array.data[0]
-      value: 0
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 3808557943752057740, guid: 467af63a9a94d2a46b7ac18aa7eb55ec, type: 3}
       propertyPath: m_RootOrder

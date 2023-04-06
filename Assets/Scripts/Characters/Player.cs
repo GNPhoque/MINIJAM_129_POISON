@@ -30,6 +30,8 @@ public class Player : MonoBehaviour
 	float currentShotChargeTime;
 	bool autoShoot;
 	bool isChargingShot;
+	bool mouseAim;
+	bool stickAim;
 
 	new Transform transform;
 
@@ -54,6 +56,8 @@ public class Player : MonoBehaviour
 	{
 		inputs.Inputs.Shoot.started += Shoot_started;
 		inputs.Inputs.Shoot.canceled += Shoot_canceled;
+		inputs.Inputs.MouseAim.started += MouseAim_started;
+		inputs.Inputs.StickAim.started += StickAim_started;
 		inputs.Enable();
 	}
 
@@ -61,6 +65,8 @@ public class Player : MonoBehaviour
 	{
 		inputs.Inputs.Shoot.started += Shoot_started;
 		inputs.Inputs.Shoot.canceled += Shoot_canceled;
+		inputs.Inputs.MouseAim.started -= MouseAim_started;
+		inputs.Inputs.StickAim.started -= StickAim_started;
 		inputs.Enable();
 	}
 
@@ -133,6 +139,18 @@ public class Player : MonoBehaviour
 		}
 		autoShoot = false;
 	}
+
+	private void StickAim_started(InputAction.CallbackContext obj)
+	{
+		mouseAim = false;
+		stickAim = true;
+	}
+
+	private void MouseAim_started(InputAction.CallbackContext obj)
+	{
+		mouseAim = true;
+		stickAim = false;
+	}
 	#endregion
 
 	#region SHOOT
@@ -140,11 +158,15 @@ public class Player : MonoBehaviour
 	{
 		currentTimeBetweenShots = stats.secondsPerShot;
 
-		Vector2 dir = ((Vector2)Camera.main.ScreenToWorldPoint(Mouse.current.position.value) - ((Vector2)transform.position + Vector2.up * .6f)).normalized;
+		Vector2 dir;
+		if (mouseAim)
+			dir = ((Vector2)Camera.main.ScreenToWorldPoint(Mouse.current.position.value) - ((Vector2)transform.position + Vector2.up * .6f)).normalized;
+		else 
+			dir = inputs.Inputs.StickAim.ReadValue<Vector2>();
 		if (!bossBonuses.Contains(LootBossBonus.PreciseShot)) dir = GetRounded4Directions(dir);
+		print(dir);
 
 		Instantiate(projectilePrefab, (Vector2)transform.position + Vector2.up * .6f, Quaternion.identity).Shoot(dir);
-
 	}
 
 	IEnumerator ShootCharged()

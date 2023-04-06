@@ -6,6 +6,8 @@ using System.IO;
 
 public class BuildManager : MonoBehaviour
 {
+    static string VERSION_NO = "BUILD_12_CONTROLS";
+
     static string[] GetBuildScenes()
     {
         List<string> buildScenes = new List<string>();
@@ -28,26 +30,24 @@ public class BuildManager : MonoBehaviour
 
     public static void BuildForPlatform(BuildTarget target)
     {
-        BuildPlayerOptions options = new BuildPlayerOptions();
-        options.scenes = GetBuildScenes();
-        options.target = target;
-        options.options = BuildOptions.None;
-
         // Set the output path based on the platform
         string outputPath = "";
         switch (target)
         {
             case BuildTarget.Android:
-                outputPath = "Builds/Android";
+                outputPath = "Builds/Android/" + VERSION_NO;
                 break;
             case BuildTarget.iOS:
-                outputPath = "Builds/iOS";
+                outputPath = "Builds/iOS/" + VERSION_NO;
                 break;
             case BuildTarget.StandaloneWindows:
-                outputPath = "Builds/Windows";
+                outputPath = "Builds/WINDOWS/" + VERSION_NO;
                 break;
             case BuildTarget.StandaloneOSX:
-                outputPath = "Builds/Mac";
+                outputPath = "Builds/Mac/" + VERSION_NO;
+                break;
+            case BuildTarget.WebGL:
+                outputPath = "Builds/WEBGL/" + VERSION_NO;
                 break;
             // Add more cases for other platforms if needed
             default:
@@ -61,9 +61,17 @@ public class BuildManager : MonoBehaviour
             Directory.CreateDirectory(outputPath);
         }
 
+        // Set the build options
+        BuildOptions buildOptions = BuildOptions.None;
+
         // Build the player and save the output to the specified path
         string buildPath = Path.Combine(outputPath, GetBuildName(target));
-        BuildPipeline.BuildPlayer(options, buildPath, target);
+        BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
+        buildPlayerOptions.scenes = GetBuildScenes();
+        buildPlayerOptions.target = target;
+        buildPlayerOptions.options = buildOptions;
+        buildPlayerOptions.locationPathName = buildPath;
+        BuildPipeline.BuildPlayer(buildPlayerOptions);
     }
 
     static string GetBuildName(BuildTarget target)
@@ -78,6 +86,8 @@ public class BuildManager : MonoBehaviour
                 return "MyGame.exe";
             case BuildTarget.StandaloneOSX:
                 return "MyGame.app";
+            case BuildTarget.WebGL:
+                return "MyGame.html";
             // Add more cases for other platforms if needed
             default:
                 Debug.LogError("Unsupported build target: " + target);
