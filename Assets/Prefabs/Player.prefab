@@ -168,6 +168,7 @@ GameObject:
   - component: {fileID: 3808557943752057739}
   - component: {fileID: -2692335000899425589}
   - component: {fileID: 76947254813659441}
+  - component: {fileID: -3336740918741310746}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -256,7 +257,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.30669734}
+  m_Offset: {x: -0.008517981, y: 0.30882683}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.42, y: 0.17}
@@ -267,7 +268,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.34619546, y: 0.65339476}
+  m_Size: {x: 0.30360556, y: 0.64913577}
   m_EdgeRadius: 0
 --- !u!50 &8250648451317819832
 Rigidbody2D:
@@ -303,21 +304,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: -2357004897920863567, guid: d3a0265ec5ad7d44ebdbded1d42e6bbc, type: 3}
-  gameOverPanel: {fileID: 0}
-  heartsParent: {fileID: 0}
-  ArmorsParent: {fileID: 0}
   invincibilityTime: 1
   timeBetweenChargedShots: 0.15
-  maxChargedShots: 4
+  maxChargedShots: 3
   chargeBar: {fileID: 2629206919018739355}
   chargeBarFill: {fileID: 854773322244508257}
-  psnDmgText: {fileID: 0}
-  psnDurText: {fileID: 0}
-  psnTickText: {fileID: 0}
-  atkDmgText: {fileID: 0}
-  atkTimeText: {fileID: 0}
-  atkVelText: {fileID: 0}
-  moveSpdText: {fileID: 0}
   stats:
     poisonDamage: 1
     poisonDuration: 4
@@ -369,6 +360,52 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!60 &-3336740918741310746
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3808557943752057742}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.42, y: 0.17}
+    oldSize: {x: 1, y: 1.77}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 0.38, y: 0.2091}
+      - {x: 0.45, y: 0.2591}
+      - {x: 0.45, y: 0.4091}
+      - {x: 0.25, y: 0.9691}
+      - {x: 0.14999999, y: 1.1591}
+      - {x: 0.14, y: 1.2591}
+      - {x: 0.08, y: 1.3391}
+      - {x: -0.049999997, y: 1.3391}
+      - {x: -0.11, y: 1.3091}
+      - {x: -0.13, y: 1.0991}
+      - {x: -0.22, y: 0.98910004}
+      - {x: -0.38, y: 0.5191}
+      - {x: -0.38, y: 0.2491}
+      - {x: -0.32, y: 0.1891}
+      - {x: -0.19, y: 0.2491}
+      - {x: -0.18129495, y: 0.0391}
+      - {x: -0.17110792, y: -0.035158977}
+      - {x: 0.15258995, y: -0.039418027}
+      - {x: 0.17999999, y: 0.019099997}
+      - {x: 0.17, y: 0.2491}
+      - {x: 0.25, y: 0.2091}
 --- !u!1 &5564203890167509299
 GameObject:
   m_ObjectHideFlags: 0

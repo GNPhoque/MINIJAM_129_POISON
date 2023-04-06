@@ -27,8 +27,6 @@ public class Enemy : BaseEnemy
 	bool isPoisoned;
 	bool isReady;
 
-	public static event Action OnAnyEnemyKilled;
-
 	private void Awake()
 	{
 		rb = GetComponent<Rigidbody2D>();
@@ -111,14 +109,15 @@ public class Enemy : BaseEnemy
 		currentAttackTime = attackTime;
 	}
 
-	public override void TakeDamage(Material mat = null, int damage = 1)
+	public override void TakeDamage(Material mat = null, float damage = 1)
 	{
 		flashEffect.Flash(mat);
 		hp -= damage;
 		hpText.text = $"{hp}";
 		if (hp <= 0)
 		{
-			OnAnyEnemyKilled?.Invoke();
+			TriggerDeadEvent();
+			AudioManager.instance.PlayEnemyDeath();
 			Destroy(gameObject);
 		}
 	}

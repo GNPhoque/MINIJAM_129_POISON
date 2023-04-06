@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-	[SerializeField] float damage;
 	[SerializeField] Collider2D col;
 	[SerializeField] PhysicsMaterial2D bouncyMat;
 
@@ -31,7 +30,7 @@ public class Projectile : MonoBehaviour
 		if (hit) return;
 		if (collision.gameObject.CompareTag("Enemy"))
 		{
-			int damage = Player.instance.stats.shotDamage;
+			float damage = Player.instance.stats.shotDamage;
 			if (Player.instance.bossBonuses.Contains(LootBossBonus.FatalShot))
 			{
 				if (Random.value <= .05) damage = 100000;

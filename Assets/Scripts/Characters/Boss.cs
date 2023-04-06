@@ -47,7 +47,6 @@ public class Boss : BaseEnemy
 	float currentRestingTime;
 
 	public static event Action OnAnyBossSpawn;
-	public static event Action OnAnyEnemyKilled;
 	public static event Action<float, float> OnBossHealthChanged;
 
 	private void Awake()
@@ -193,10 +192,10 @@ public class Boss : BaseEnemy
 
 	void StartRushing()
 	{
-		if (UnityEngine.Random.value < normalRushChance)
+		//if (UnityEngine.Random.value < normalRushChance)
 			isRushing = true;
-		else
-			isRushingAlt = true;
+		//else
+		//	isRushingAlt = true;
 		animator.SetBool("IsRushing", true);
 		oldMovementDirection = (Player.instance.transform.position - transform.position).normalized;
 		currentSpeed = rushSpeed;
@@ -211,7 +210,7 @@ public class Boss : BaseEnemy
 		StartResting();
 	}
 
-	public override void TakeDamage(Material mat = null, int damage = 1)
+	public override void TakeDamage(Material mat = null, float damage = 1)
 	{
 		if (damage > 10000) damage = Player.instance.stats.shotDamage;
 		flashEffect.Flash(mat);
@@ -221,8 +220,9 @@ public class Boss : BaseEnemy
 		{
 			transform.parent = null;
 			isDead = true;
-			spriteRenderer.color = Color.white;
-			OnAnyEnemyKilled?.Invoke();
+			spriteRenderer.color = Color.white; 
+			TriggerDeadEvent();
+			AudioManager.instance.PlayBossDeath();
 			animator.SetBool("IsDead", isDead);
 			//Destroy(gameObject);
 		}

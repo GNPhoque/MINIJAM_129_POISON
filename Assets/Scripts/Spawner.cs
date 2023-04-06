@@ -4,14 +4,11 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
-	[SerializeField] GameObject unitPrefab;
 	[SerializeField] float spawnTime;
 	[SerializeField] Transform[] spawnPoints;
+	[SerializeField] List<BaseEnemy> enemies;
 	
-	public int spawnLimit;
-
 	float currentSpawnTime;
-	int spawnedEnnemies;
 
 	private void Start()
 	{
@@ -25,26 +22,19 @@ public class Spawner : MonoBehaviour
 			return;
 		}
 
-		if (spawnedEnnemies >= spawnLimit) return;
+		if (enemies.Count == 0) return;
 
 		currentSpawnTime -= Time.deltaTime;
 		if (currentSpawnTime <= 0)
 		{
 			currentSpawnTime = spawnTime;
-			Instantiate(unitPrefab, spawnPoints[Random.Range(0, spawnPoints.Length)]);
-			spawnedEnnemies++;
+			Instantiate(enemies[0], spawnPoints[Random.Range(0, spawnPoints.Length)]);
+			enemies.RemoveAt(0);
 		}
 	}
 
-	public void ResetSpawns(int spawns)
+	public void SetSpawns(List<BaseEnemy> _enemies)
 	{
-		spawnLimit = spawns;
-		spawnedEnnemies = 0;
-		currentSpawnTime = spawnTime;
-	}
-
-	public void SetSpawnPrefab(GameObject newPrefab)
-	{
-		unitPrefab = newPrefab;
+		enemies = _enemies;
 	}
 }

@@ -202,7 +202,12 @@ public class Player : MonoBehaviour
 		{
 			isDead = true;
 			animator.SetBool("IsDead", true);
+			AudioManager.instance.PlayPlayerDeath();
 			OnDeath?.Invoke();
+		}
+		else
+		{
+			AudioManager.instance.PlayPlayerHit();
 		}
 	}
 }

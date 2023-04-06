@@ -2,14 +2,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Loot : MonoBehaviour
 {
 	public LootBonusStat bonusStat;
 	public LootBossBonus bossBonus;
 	public float value;
+	public bool isBossLoot;
 
-	public static event Action OnAnyLootBonusPicked;
+	public static event Action<Sprite> OnAnyLootBonusPicked;
 	public static event Action OnAnyStatLootBonusPicked;
 
 	private void OnCollisionEnter2D(Collision2D collision)
@@ -30,7 +32,7 @@ public class Loot : MonoBehaviour
 						Player.instance.stats.poisonTickTime -= value;
 						break;
 					case LootBonusStat.shotDamage:
-						Player.instance.stats.shotDamage += (int)value;
+						Player.instance.stats.shotDamage += value;
 						break;
 					case LootBonusStat.secondsPerShot:
 						Player.instance.stats.secondsPerShot -= value;
@@ -67,7 +69,7 @@ public class Loot : MonoBehaviour
 				Player.instance.bossBonuses.Add(bossBonus);
 			}
 
-			OnAnyLootBonusPicked?.Invoke();
+			OnAnyLootBonusPicked?.Invoke(isBossLoot ?transform.GetChild(1).GetComponent<SpriteRenderer>().sprite : null);
 		}
 	}
 }

@@ -23,7 +23,10 @@ public class UIDisplay : MonoBehaviour
 		Player.OnDeath += Player_OnDeath;
 		Boss.OnAnyBossSpawn += Boss_OnAnyBossSpawn;
 		Boss.OnBossHealthChanged += Boss_OnBossHealthChanged;
+		BossSecondFight.OnAnyBossSpawn += Boss_OnAnyBossSpawn;
+		BossSecondFight.OnBossHealthChanged += Boss_OnBossHealthChanged;
 		Boss.OnAnyEnemyKilled += Boss_OnAnyEnemyKilled;
+		BossSecondFight.OnAnyEnemyKilled += Boss_OnAnyEnemyKilled;
 		Loot.OnAnyStatLootBonusPicked += Loot_OnAnyStatLootBonusPicked;
 	}
 
@@ -33,7 +36,10 @@ public class UIDisplay : MonoBehaviour
 		Player.OnDeath -= Player_OnDeath;
 		Boss.OnAnyBossSpawn -= Boss_OnAnyBossSpawn;
 		Boss.OnBossHealthChanged -= Boss_OnBossHealthChanged;
+		BossSecondFight.OnAnyBossSpawn -= Boss_OnAnyBossSpawn;
+		BossSecondFight.OnBossHealthChanged -= Boss_OnBossHealthChanged;
 		Boss.OnAnyEnemyKilled -= Boss_OnAnyEnemyKilled;
+		BossSecondFight.OnAnyEnemyKilled -= Boss_OnAnyEnemyKilled;
 		Loot.OnAnyStatLootBonusPicked -= Loot_OnAnyStatLootBonusPicked;
 	}
 

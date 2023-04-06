@@ -11,8 +11,7 @@ public class Room : MonoBehaviour
 
 	public CinemachineVirtualCamera VirtualCamera;
 	public List<GameObject> loots;
-	public int totalEnemies;
-	public bool isBossRoom;
+	public List<BaseEnemy> enemies;
 
 	public static event Action OnRoomClosed;
 

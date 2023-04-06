@@ -10,7 +10,7 @@ public class PlayerStats
 	public int poisonDuration;
 	public float poisonTickTime;
 
-	public int shotDamage;
+	public float shotDamage;
 	public float secondsPerShot;
 	public int shotVelocity;
 

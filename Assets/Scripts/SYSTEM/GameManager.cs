@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,6 +11,8 @@ public class GameManager : MonoBehaviour
 	[SerializeField] GameObject enemyPrefab;
 	[SerializeField] GameObject bossPrefab;
 	[SerializeField] Cinemachine.CinemachineVirtualCamera enterCamera;
+	[SerializeField] Transform bonusParent;
+	[SerializeField] Transform bonusPrefab;
 
 	public List<GameObject> currentLoots;
 	
@@ -27,23 +30,21 @@ public class GameManager : MonoBehaviour
 	private void OnEnable()
 	{
 		Room.OnRoomClosed += Room_OnRoomClosed;
-		Enemy.OnAnyEnemyKilled += Enemy_OnAnyEnemyKilled;
-		Boss.OnAnyEnemyKilled += Enemy_OnAnyEnemyKilled;
+		BaseEnemy.OnAnyEnemyKilled += Enemy_OnAnyEnemyKilled;
 		Loot.OnAnyLootBonusPicked += Loot_OnAnyLootBonusPicked;
 	}
 
 	private void OnDisable()
 	{
 		Room.OnRoomClosed -= Room_OnRoomClosed;
-		Enemy.OnAnyEnemyKilled -= Enemy_OnAnyEnemyKilled;
-		Boss.OnAnyEnemyKilled -= Enemy_OnAnyEnemyKilled;
+		BaseEnemy.OnAnyEnemyKilled -= Enemy_OnAnyEnemyKilled;
 		Loot.OnAnyLootBonusPicked -= Loot_OnAnyLootBonusPicked;
 	}
 
 	private void Start()
 	{
-		remainingEnemies = rooms[0].totalEnemies;
-		spawner.spawnLimit = remainingEnemies;
+		spawner.SetSpawns(rooms[0].enemies);
+		remainingEnemies = rooms[0].enemies.Count;
 		currentLoots = rooms[0].loots;
 		enterCamera.Priority = 0;
 	}
@@ -60,19 +61,8 @@ public class GameManager : MonoBehaviour
 		Destroy(rooms[0]);
 		rooms.RemoveAt(0);
 
-		//IF BOSS ROOM
-		if(rooms[0].isBossRoom)
-		{
-			spawner.SetSpawnPrefab(bossPrefab);
-		}
-		else
-		{
-			spawner.SetSpawnPrefab(enemyPrefab);
-		}
-
-		spawner.ResetSpawns(rooms[0].totalEnemies);
-		remainingEnemies = rooms[0].totalEnemies;
-		spawner.spawnLimit = remainingEnemies;
+		spawner.SetSpawns(rooms[0].enemies);
+		remainingEnemies = rooms[0].enemies.Count;
 		currentLoots = rooms[0].loots;
 
 		Player.instance.stats.armor++;
@@ -96,8 +86,9 @@ public class GameManager : MonoBehaviour
 		}
 	}
 
-	private void Loot_OnAnyLootBonusPicked()
+	private void Loot_OnAnyLootBonusPicked(Sprite s)
 	{
+		if(s) Instantiate(bonusPrefab, bonusParent).GetComponentInChildren<Image>().sprite = s;
 		foreach (var item in currentLoots)
 		{
 			Destroy(item.gameObject);
